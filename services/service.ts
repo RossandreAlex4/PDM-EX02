@@ -37,6 +37,26 @@ class Service {
     removeItem(id: string): void{
         this.items = this.items.filter(item => item.id !== id);
     }
+
+    editaItem(id: string, name: string): string {
+    if (name.trim().length < 2) {
+      return "nome_curto";
+    }
+  
+    const existe = this.items.find(
+      item => item.name.toLowerCase() === name.toLowerCase() && item.id !== id
+    );
+  
+    if (existe) {
+      return "nome_repetido";
+    }
+  
+    this.items = this.items.map(item =>
+      item.id === id ? { ...item, name } : item
+    );
+  
+    return "sucesso";
+    }   
 }
 
 
