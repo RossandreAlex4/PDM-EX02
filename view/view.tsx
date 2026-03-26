@@ -1,27 +1,40 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Modal, TextInput, Alert, Image, Dimensions } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Modal, TextInput, Alert, Image, Dimensions, Button } from 'react-native';
 import { useItemController } from '../controllers/controller';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { StackParamList } from '../navigation/stackNavigation';
+import { useFocusEffect } from '@react-navigation/native';
 
-export const ItemView = () => {
+type Props = {
+  navigation: NativeStackNavigationProp<StackParamList, 'Form'>;
+};
 
-  const { items, dialogVisible, editItemId, addItem, removeItem, editaItem, openDialog, closeDialog, openEditDialog } = useItemController();
+export const ItemView = ({navigation}: Props) => {
+
+  const { items, dialogVisible, editItemId, addItem, removeItem, editaItem, openDialog, closeDialog, openEditDialog, loadItems } = useItemController();
   const [texto, setTexto] = useState('');
   const larguraTela = Dimensions.get('screen').width;
 
+  useFocusEffect(
+  React.useCallback(() => {
+    loadItems();
+  }, [])
+);
+
   return (
     <View style={{ flex: 1, padding: 20 }}>
-      <View style={{flexDirection: 'row', alignSelf: 'center', alignItems: 'center'}}>
-        <Image
-            source={require('../assets/person.png')}
-            style={{ maxWidth: 90, minWidth:20, maxHeight: 90, minHeight:20, alignItems: 'center' }}
-          />
-        <Text style={{fontSize: larguraTela * 0.12 , textAlign: 'center'}}>
-          List Maker
-        </Text>
-      </View>
+       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 30 }}>
+              <Image
+                source={require('../assets/person.png')}
+                style={{ width: 60, height: 60, marginRight: 10 }}
+              />
+              <Text style={{ fontSize: larguraTela * 0.08 }}>
+                List Maker
+              </Text>
+            </View>
 
       <TouchableOpacity
-        onPress={openDialog}
+        onPress={() => navigation.navigate("Form")}
         style={{ backgroundColor: 'red', padding: 10, marginBottom: 20, borderRadius: 10 }}
       >
         <Text style={{ color: 'white', textAlign: 'center' }}>Adicione seus personagens favoritos</Text>

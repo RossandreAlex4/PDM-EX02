@@ -17,18 +17,12 @@ export const useItemController = () => {
   };
 
   const addItem = (name: string) => {
-
     const resultado = ItemService.addItems(name);
-    
-    if (resultado === "sucesso"){
-      loadItems();
-      setDialogVisible(false);
-    } if (resultado === "nome_repetido") {
-      alert("Já existe um personagem com esse nome na lista")
-    } if (resultado === "nome_curto") {
-      alert("O nome precisa ter pelo menos 2 letras")
-    }
-  };
+      if (resultado === "sucesso") {
+        loadItems();
+      }
+  return resultado; 
+};
 
   const removeItem = (id: string) =>{
     ItemService.removeItem(id);
@@ -36,21 +30,13 @@ export const useItemController = () => {
   }
 
   const editaItem = (id: string, name: string) => {
+    const resultado = ItemService.editaItem(id, name);
+    
+    if (resultado === "sucesso") {
+      loadItems();
+    }
 
-  const resultado = ItemService.editaItem(id, name);
-
-  if (resultado === "sucesso"){
-    loadItems();
-    setDialogVisible(false);
-  } 
-
-  if (resultado === "nome_repetido") {
-    alert("Já existe um personagem com esse nome na lista");
-  } 
-
-  if (resultado === "nome_curto") {
-    alert("O nome precisa ter pelo menos 2 letras");
-  }
+  return resultado; 
 };
 
   const openDialog = () => {
@@ -82,7 +68,8 @@ export const useItemController = () => {
     closeDialog,
     editaItem,
     openEditDialog,
-    closeEditDialog
+    closeEditDialog,
+    loadItems
     
   };
 };
