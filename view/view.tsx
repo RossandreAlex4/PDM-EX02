@@ -4,6 +4,7 @@ import { useItemController } from '../controllers/controller';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StackParamList } from '../navigation/stackNavigation';
 import { useFocusEffect } from '@react-navigation/native';
+import { AlertModal } from 'react-native-th-components';
 
 type Props = {
   navigation: NativeStackNavigationProp<StackParamList, 'Form'>;
@@ -14,6 +15,8 @@ export const ItemView = ({navigation}: Props) => {
   const { items, dialogVisible, editItemId, addItem, removeItem, editaItem, openDialog, closeDialog, openEditDialog, loadItems } = useItemController();
   const [texto, setTexto] = useState('');
   const larguraTela = Dimensions.get('screen').width;
+  const [isOpen, setIsOpen] = useState(false);
+  const [result, setResult] = useState('');
 
   useFocusEffect(
   React.useCallback(() => {
@@ -24,6 +27,12 @@ export const ItemView = ({navigation}: Props) => {
   return (
     <View style={{ flex: 1, padding: 20 }}>
        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 30 }}>
+          <AlertModal
+            isOpen={isOpen}
+            onClose={() => setIsOpen(false)}
+            message={result}
+            buttonText='Fechar'
+          />
               <Image
                 source={require('../assets/person.png')}
                 style={{ width: 60, height: 60, marginRight: 10 }}
@@ -92,16 +101,31 @@ export const ItemView = ({navigation}: Props) => {
             />
 
             <TouchableOpacity
-              onPress={() => {{
-                  if(editItemId){
-                    editaItem(editItemId, texto);
-                  }else{
-                    addItem(texto);
-                  }
-                
+              onPress={() => {
+                let resultado;
+              
+                if (editItemId) {
+                  resultado = editaItem(editItemId, texto);
+                } else {
+                  resultado = addItem(texto);
                 }
+              
+                if (resultado === "nome_curto") {
+                  setResult("Digite pelo menos 2 letras");
+                  setIsOpen(true);
+                  return;
+                }
+              
+                if (resultado === "nome_repetido") {
+                  setResult("Nome já existe");
+                  setIsOpen(true);
+                  return;
+                }
+              
+                setTexto('');
+                closeDialog();
               }}
-              style={{ backgroundColor: 'green', padding: 10, marginBottom: 10 }}
+              style={{ backgroundColor: 'green', padding: 10,              marginBottom: 10 }}
             >
               <Text style={{ color: 'white', textAlign: 'center' }}>
                 {editItemId ? "Salvar edição" : "Adicionar"}

@@ -4,7 +4,7 @@ import { useItemController } from '../controllers/controller';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StackParamList } from '../navigation/stackNavigation';
 import ItemService from '../services/service';
-
+import { AlertModal } from 'react-native-th-components';
 
 type Props = {
   navigation: NativeStackNavigationProp<StackParamList, 'List'>;
@@ -15,23 +15,34 @@ export const AddItemView = ({navigation} : Props) => {
   
   const [texto, setTexto] = useState('');
   const larguraTela = Dimensions.get('window').width;
+  const [result, setResult] = useState('');
 
   const handleSave = () => {
-
-  const resultado = ItemService.addItems(texto);
-
-  if (resultado === "nome_curto") {
-    Alert.alert("Erro", "Digite pelo menos 2 letras");
-  } else if (resultado === "nome_repetido") {
-    Alert.alert("Erro", "Nome já existe");
-  } else {
-    setTexto('');
-    navigation.goBack();
-  }
+    const resultado = ItemService.addItems(texto);
+   
+  
+    if (resultado === "nome_curto") {
+      setResult('Digite pelo menos 2 letras');
+      setIsOpen(true);
+    } else if (resultado === "nome_repetido") {
+      setResult('Nome já existe')
+      setIsOpen(true);
+    } else {
+      setTexto('');
+      navigation.goBack();
+    }
 };
+
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <View style={{ flex: 1, padding: 20, justifyContent: 'center' }}>
+      <AlertModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        message={result}
+        buttonText='Fechar'
+      />
 
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 30 }}>
         <Image
